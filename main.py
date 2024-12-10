@@ -195,7 +195,7 @@ def main1():
 
     # Create the game window and clock
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption("Flappy Bird")
+    pygame.display.set_caption("Flappy Bird!")
     clock = pygame.time.Clock()
 
     # Create game elements
@@ -373,7 +373,7 @@ def run(config_path):
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__) # get the current directory
     config_path = os.path.join(local_dir, "config.txt") # get the path of the config file
-    run(config_path) # run the
+    run(config_path) # run the main function 
     # i = 1
     # while True:
     #     print("\033[92m" + "[INFO] Starting Flappy Bird " + str(i) + "..." + "\033[0m")
