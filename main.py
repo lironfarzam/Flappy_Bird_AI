@@ -104,7 +104,7 @@ class Bird:
     
 class Pipe:
     GAP = 200 # space between the pipes
-    VEL = 7 # how fast the pipes are moving
+    VEL = 5 # how fast the pipes are moving
 
     def __init__(self, x):
         self.x = x # x position of the pipe
@@ -148,7 +148,7 @@ class Pipe:
         return False # we didn't collide
     
 class Base:
-    VEL = 7 # how fast the base is moving
+    VEL = 5 # how fast the base is moving
     WIDTH = BASE_IMG.get_width() # width of the base
     IMG = BASE_IMG # image of the base
 
@@ -173,17 +173,85 @@ class Base:
         win.blit(self.IMG, (self.x1, self.y)) # draw the first image of the base
         win.blit(self.IMG, (self.x2, self.y)) # draw the second image of the base
 
-
+# --------------------------------------------------------------- #
+def draw_window1(win, bird, pipes, base, score):
+    win.blit(BG_IMG, (0,0)) # draw the background
     
+    for pipe in pipes:# draw the pipes
+        pipe.draw(win)
 
+
+    text = STAT_FONT.render("Score: " + str(score), 1, (255,255,255)) # draw the score
+    win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10)) # draw the score
     
-    
+    base.draw(win) # draw the base
 
+    bird.draw(win) # draw the bird
+    pygame.display.update() # update the display
 
+def main1():
+    # Initialize Pygame
+    pygame.init()
 
+    # Create the game window and clock
+    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    pygame.display.set_caption("Flappy Bird")
+    clock = pygame.time.Clock()
 
+    # Create game elements
+    bird = Bird(230, 350)
+    base = Base(730)
+    pipes = [Pipe(600)]
+    score = 0
 
+    # Game loop
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    bird.jump()
+
+        bird.move()
+        base.move()
+
+        # Generate pipes and handle collisions
+        for pipe in pipes:
+            pipe.move()
+            if pipe.collide(bird):
+                # Game over logic
+                run = False
+                break
+            if pipe.x + pipe.PIPE_TOP.get_width() < 0:
+                pipes.remove(pipe)
+            if not pipe.passed and pipe.x < bird.x:
+                pipe.passed = True
+                score += 1
+                pipes.append(Pipe(WIN_WIDTH))
+
+        # Check for bird hitting the ground or going above the screen
+        if bird.y + bird.img.get_height() >= 730:
+            # Game over logic
+            run = False
+
+        # Draw the game window
+        draw_window1(win, bird, pipes, base, score)
+
+    # Game over message
+    game_over_text = STAT_FONT.render("Game Over", 1, (255, 0, 0))
+    win.blit(game_over_text, (WIN_WIDTH // 2 - game_over_text.get_width() // 2, WIN_HEIGHT // 2 - game_over_text.get_height() // 2))
+    pygame.display.update()
+
+    # Delay before quitting the game
+    pygame.time.delay(2000)
+    print("\033[92m" + "[INFO] Game Over" + "\033[0m")
+    print("\033[92m" + "[INFO] Score: " + str(score) + "\033[0m")
+    pygame.quit()
+# --------------------------------------------------------------- #
 
 def draw_window(win, birds, pipes, base, score):
     win.blit(BG_IMG, (0,0)) # draw the background
@@ -200,55 +268,6 @@ def draw_window(win, birds, pipes, base, score):
     for bird in birds:
         bird.draw(win) # draw the bird
     pygame.display.update() # update the display
-
-# def main1():
-#     print("\033[92m" + "[INFO] Starting Flappy Bird..." + "\033[0m")
-
-#     bird = Bird(230, 350)
-#     base = Base(730)
-#     pipes = [Pipe(600)]
-#     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-#     clock = pygame.time.Clock()
-#     score = 0
-
-#     run = True
-#     while run:
-#         clock.tick(30) # 30 fps
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 run = False
-#                 pygame.quit()
-        
-#         base.move()
-#         add_pipe = False
-#         rem = []
-#         for pipe in pipes:
-#             if pipe.collide(bird):
-#                 pass
-#             if pipe.x + pipe.PIPE_TOP.get_width() < 0: # if the pipe is off the screen 
-#                 rem.append(pipe) # remove the pipe
-#             if not pipe.passed and pipe.x < bird.x:
-#                 pipe.passed = True
-#                 add_pipe = True
-
-#             pipe.move()
-
-#         if add_pipe:
-#             score += 1
-#             pipes.append(Pipe(600))
-
-#         for r in rem:
-#             pipes.remove(r)
-
-#         if bird.y + bird.img.get_height() >= 730 or bird.y < 0:
-#             pass
-        
-
-#         # bird.move()
-#         draw_window(win, bird, pipes, base, score)
-
-#     pygame.quit()
-#     quit()
 
 def main(genomes, config):
     print("\033[92m" + "[INFO] Starting Flappy Bird..." + "\033[0m")
@@ -355,3 +374,11 @@ if __name__ == "__main__":
     local_dir = os.path.dirname(__file__) # get the current directory
     config_path = os.path.join(local_dir, "config.txt") # get the path of the config file
     run(config_path) # run the
+    # i = 1
+    # while True:
+    #     print("\033[92m" + "[INFO] Starting Flappy Bird " + str(i) + "..." + "\033[0m")
+    #     main1()
+    #     i += 1
+        
+
+
