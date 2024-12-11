@@ -369,7 +369,8 @@ def run(config_path):
     winner = p.run(main, 50) # run the main function 50 times
 
 
-
+  
+  
 if __name__ == "__main__":
     local_dir = os.path.dirname(__file__) # get the current directory
     config_path = os.path.join(local_dir, "config.txt") # get the path of the config file
